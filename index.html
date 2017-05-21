@@ -13,11 +13,10 @@
           <th scope="row" ng-class="car.active(floor.n) &amp;&amp; 'active'">
             <span ng-show="car.active(floor.n)" ng-bind="car.state()"></span>
           </th>
-          <td>{{floor.title}}</th>
-          <td ng-class="floor.light">&#x25cf;</td>
+          <td ng-class="floor.light()">{{floor.title}} </td>
           <td>
-            <button type="button">Call</button>
-            <button type="button" ng-disabled="!car.canOpen(floor.n)">Open door</button>
+            <button type="button" ng-disabled="car.occupied" ng-click="panel.press(floor.title)">Call</button>
+            <button type="button" ng-click="car.openDoor()" ng-disabled="!car.canOpen(floor.n)">Open door</button>
           </td>
         <tr>
       </table>
@@ -27,19 +26,19 @@
       <h2>Controls in car</h2>
       <ul>
         <li ng-repeat="floor in floors">
-          <button type="button" ng-disabled="!car.occupied" ng-click="panel.press(floor.n)" ng-class="panel.btnClass(floor.n)">{{floor.title}}</button>
+          <button type="button" ng-disabled="!car.occupied" ng-click="panel.press(floor.title)" ng-class="panel.btnClass(floor.n)">{{floor.title}}</button>
         </li>
         <li>
-          <button class="stop" type="button" ng-disabled="!car.occupied" ng-click="panel.stop()">STOP</button>
+          <button class="stop" type="button" ng-disabled="!car.occupied" ng-click="panel.stop(floor.n)">STOP</button>
         </li>
       </ul>
     </section>
 
     <section>
       <h2>User controls</h2>
-      <button type="button">Open car door</button>
-      <button type="button" ng-click="car.stepIn()">Step in</button>
-      <button type="button" ng-click="car.stepOut()">Step out</button>
+      <button type="button" ng-disabled="car.open" ng-click="car.openDoor()">Open car door</button>
+      <button type="button" ng-disabled="car.occupied || !car.open" ng-click="car.stepIn()">Step in</button>
+      <button type="button" ng-disabled="!car.occupied || !car.open" ng-click="car.stepOut()">Step out</button>
     </section>
   </body>
 </html>
