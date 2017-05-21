@@ -42,7 +42,7 @@ controller("ElevatorCtrl", ["$scope", "$interval", "$timeout", function($scope, 
         },
 
         dir: 0,
-        floor: 10,
+        floor: 0,
         open: false,
         occupied: false
     };
@@ -60,24 +60,23 @@ controller("ElevatorCtrl", ["$scope", "$interval", "$timeout", function($scope, 
             }
             $scope.car.dir = 0;
             $scope.car.open = false;
-            var floorCar = 10 - $scope.car.floor;
-            $scope.floors[10 - n].press = true;
-            if (floorCar > n) {
+            $scope.floors[$scope.floors.length - 1 - n].press = true;
+            if ($scope.car.floor < n) {
                 Timer = $interval(function() {
-                    floorCar = 10 - $scope.car.floor;
-                    $scope.car.dir = 1;
+                    var floorCar = $scope.floors.length - $scope.car.floor;
+                    $scope.car.dir = -1;
                     $scope.car.floor++;
-                }, 1000, [floorCar - n]);
+                }, 1000, [n - $scope.car.floor]);
 
             } else {
                 Timer = $interval(function() {
-                    floorCar = 10 - $scope.car.floor;
-                    $scope.car.dir = -1;
+                    var floorCar = $scope.floors.length - $scope.car.floor;
+                    $scope.car.dir = 1;
                     $scope.car.floor--;
-                }, 1000, [n - floorCar]);
+                }, 1000, [$scope.car.floor - n]);
             }
             Timer.then(function() {
-                $scope.floors[10 - n].press = false;
+                $scope.floors[$scope.floors.length - 1 - n].press = false;
                 $scope.car.dir = 0;
                 $scope.car.open = false;
                 return false;
@@ -107,7 +106,7 @@ controller("ElevatorCtrl", ["$scope", "$interval", "$timeout", function($scope, 
     // Let's have them know their indices. Zero-indexed, from top to bottom.
     // Also let's initialize them.
     floors.forEach(function(floor, n) {
-        floor.n = n;
+        floor.n = $scope.floors.length - 1 - n;
         floor.open = false;
         floor.press = null;
         floor.light = function(n) {
@@ -115,7 +114,7 @@ controller("ElevatorCtrl", ["$scope", "$interval", "$timeout", function($scope, 
                 return "green";
             } else if (this.press === false && $scope.car.occupied === true) {
                 return "red";
-            } else  {
+            } else {
                 return "null";
             }
         };
